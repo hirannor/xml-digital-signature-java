@@ -37,6 +37,12 @@ public class XmlDigitalSignatureImpl implements XmlDigitalSignature {
 
     private static final String SIGNATURE_NODE = "Signature";
 
+    // Ignoring line break characters at end of each line to avoid &#13; character
+    // It can break the signature verification for external software like: Chilkat
+    static {
+        System.setProperty("com.sun.org.apache.xml.internal.security.ignoreLineBreaks", "true");
+    }
+
     @Override
     public byte[] generateDetachedSignature(final Document document, final String digestMethod, final String signatureMethod) throws XmlDigitalSignatureException {
         try {

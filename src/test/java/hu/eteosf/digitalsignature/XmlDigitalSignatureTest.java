@@ -11,19 +11,34 @@ import java.io.InputStream;
 
 public class XmlDigitalSignatureTest {
 
-    private static final String FILE_NAME = "document.xml";
+    private static final String DOCUMENT = "document.xml";
+    private static final String SIGNATURE_DOCUMENT = "document.sign.xml";
 
     final XmlDigitalSignature xmlDigitalSignature = new XmlDigitalSignatureImpl();
 
     @Test
     public void testSignAndVerifySignature() throws Exception {
         // given
-        byte[] data = loadFileFromClassPath(FILE_NAME);
-        final Document document = new Document(FILE_NAME, data);
+        byte[] data = loadFileFromClassPath(DOCUMENT);
+        final Document document = new Document(DOCUMENT, data);
 
         // when
         byte[] signedDocument = xmlDigitalSignature.generateDetachedSignature(document, DigestMethod.SHA512, SignatureMethod.RSA_SHA512);
+
         boolean verified = xmlDigitalSignature.verifyDetachedSignature(data, signedDocument);
+
+        // then
+        Assert.assertTrue("Verification of signature should be true", verified);
+    }
+
+    @Test
+    public void testVerifySignature() throws Exception {
+        // given
+        byte[] data = loadFileFromClassPath(DOCUMENT);
+        byte[] signature = loadFileFromClassPath(SIGNATURE_DOCUMENT);
+
+        // when
+        boolean verified = xmlDigitalSignature.verifyDetachedSignature(data, signature);
 
         // then
         Assert.assertTrue("Verification of signature should be true", verified);
